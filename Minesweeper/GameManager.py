@@ -1,6 +1,7 @@
 import tkinter as tk
 import numpy as np
 from MinesweeperTIle import Tile
+from tkinter import messagebox
 
 class GM:
     gameSizeList = ["5x5", "10x10", "10x5"]
@@ -11,14 +12,18 @@ class GM:
         self.sizeListBox = sizeListBox
         self.mineSpinBox = mineSpinBox
 
-    def GenerateTileGrid(self):
+    def GenerateTileGrid(self, showAll = False):
         for y in range(self.tileArray.shape[0]):
             for x in range(self.tileArray.shape[1]):
-
-                if self.tileArray[y, x].bomb:
-                    newButton = tk.Button(self.gameFrame,text = "*", height = 1, width = 2)
+                if showAll:
+                    print("TREU")
+                    newButton = tk.Button(self.gameFrame,text = self.tileArray[y, x].number, height = 1, width = 2)
                 else:
-                    newButton = tk.Button(self.gameFrame, text = self.tileArray[y, x].number, height = 1, width = 2)
+                    if self.tileArray[y, x].revealed:
+                        newButton = tk.Button(self.gameFrame,text = self.tileArray[y, x].number, height = 1, width = 2)
+                    else:
+                        newButton = tk.Button(self.gameFrame, height = 1, width = 2)
+
                 newButton.grid(row = y, column = x)
                 newButton.bind("<Button-1>", lambda event, a = x, b = y: self.TileButtonPressed(a, b))
 
@@ -46,7 +51,6 @@ class GM:
                     neighbourBombs = 0
                     for yy in range(-1, 2):
                         for xx in range(-1, 2):
-                            print(xx + x, " ", yy + y, self.Isbomb(x + xx, y + yy))
                             if(self.Isbomb(x + xx, y + yy)):
                                 neighbourBombs += 1
                     self.tileArray[y, x] = Tile(neighbourBombs)
@@ -64,6 +68,14 @@ class GM:
             self.GenerateTiles()
             self.GenerateTileGrid()
 
+    def GameOver(self):
+        self.GenerateTileGrid(True)
+        tk.messagebox.showerror(title="Game over", message="You lost")
+        
     def TileButtonPressed(self, x, y):
-        print("Pressed: ", x, y)
+        if self.tileArray[y, x].bomb:
+            self.GameOver()
+
+        self.tileArray[y, x].revealed = True
+        self.GenerateTileGrid()
         

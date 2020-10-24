@@ -11,19 +11,20 @@ w.title("Minesweeper")
 w.geometry("500x300")
 
 infoFrame = tk.Frame(w)
-sizeListBox = tk.Listbox(infoFrame)
+infoFrame.pack(side="left", fill = "y")
+sizeListBox = tk.Listbox(infoFrame, height = 3)
 gameFrame = tk.Frame(w)
-gameManager = gm.GM(gameFrame, sizeListBox)
+gameFrame.pack(fill = "x",)
+mineSpinBox = tk.Spinbox(infoFrame, from_ = 1, to = 10)
+
+gameManager = gm.GM(gameFrame, sizeListBox, mineSpinBox)
+
+gameLabel = tk.Label(infoFrame,text = "Minesweeper", font=("Arial", 20))
+gameLabel.pack(side = "top")
 
 
-infoFrame.pack(side="left")
-
-
-gameFrame.pack()
-
-gameLabel = tk.Label(infoFrame,text = "Minesweeper")
-gameLabel.pack()
-
+gameSizeLabel = tk.Label(infoFrame,text = "Board size")
+gameSizeLabel.pack()
 
 for x in range(len(gameManager.gameSizeList)):
     sizeListBox.insert(x, gameManager.gameSizeList[x])
@@ -34,9 +35,13 @@ selectionRadioButton1.pack()
 selectionRadioButton2 = tk.Radiobutton(infoFrame, text = "Flag", variable = selecting, value = False)
 selectionRadioButton2.pack()
 
+mineLabel = tk.Label(infoFrame,text = "Mines amount")
+mineLabel.pack()
+mineSpinBox.pack()
+
 startButton = tk.Button(infoFrame, text="Start", width = 10, height = 2)
 startButton.bind("<Button-1>", gameManager.StartButtonPressed)
-startButton.pack()
+startButton.pack(side="bottom")
 
 
 w.mainloop()

@@ -4,23 +4,30 @@ import GameManager as gm
 
 w = tk.Tk()
 w.title("Minesweeper")
-w.geometry("500x300")
+w.geometry("600x400")
+w.minsize("600", "400")
 
 infoFrame = tk.Frame(w)
 infoFrame.pack(side="left", fill = "y")
-sizeListBox = tk.Listbox(infoFrame, height = 3)
-gameFrame = tk.Frame(w)
-gameFrame.pack(fill = "x",)
-mineSpinBox = tk.Spinbox(infoFrame, from_ = 1, to = 10)
-
-gameManager = gm.GM(gameFrame, sizeListBox, mineSpinBox)
 
 gameLabel = tk.Label(infoFrame,text = "Minesweeper", font=("Arial", 20))
-gameLabel.pack(side = "top")
-
 
 gameSizeLabel = tk.Label(infoFrame,text = "Board size")
 gameSizeLabel.pack()
+
+gameLabel.pack(side = "top")
+
+sizeListBox = tk.Listbox(infoFrame, height = 3)
+gameFrame = tk.Frame(w)
+gameFrame.pack(fill = "both", expand = "yes")
+mineSpinBox = tk.Spinbox(infoFrame, from_ = 1, to = 10)
+
+timeLabel = tk.Label(infoFrame,text = "Time: 0.00")
+
+
+gameManager = gm.GM(w, gameFrame, sizeListBox, mineSpinBox, timeLabel)
+
+
 
 for x in range(len(gameManager.gameSizeList)):
     sizeListBox.insert(x, gameManager.gameSizeList[x])
@@ -37,9 +44,11 @@ mineLabel = tk.Label(infoFrame,text = "Mines amount")
 mineLabel.pack()
 mineSpinBox.pack()
 
+timeLabel.pack(side = "top")
+
 startButton = tk.Button(infoFrame, text="Start", width = 10, height = 2)
 startButton.bind("<Button-1>", gameManager.StartButtonPressed)
-startButton.pack(side="bottom")
+startButton.pack(side="bottom", fill = "x")
 
 
 w.mainloop()

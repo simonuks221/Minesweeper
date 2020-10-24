@@ -4,18 +4,23 @@ from MinesweeperTIle import Tile
 from tkinter import messagebox
 
 class GM:
-    gameSizeList = ["5x5", "10x10", "10x5"]
+    gameSizeList = ["10x10", "15x15", "15x10"]
     tileArray = np.ndarray((1, 1), dtype = np.object)
     
-    def __init__(self, gameFrame, sizeListBox, mineSpinBox):
+    def __init__(self, root, gameFrame, sizeListBox, mineSpinBox, timeLabel):
+        self.root = root
         self.gameFrame = gameFrame
         self.sizeListBox = sizeListBox
         self.mineSpinBox = mineSpinBox
+        self.timeLabel = timeLabel
         self.selecting = tk.BooleanVar()
         self.selecting.set(True)
         self.flagsPlaced = 0
+        self.time = 0
 
-    def getTileText(self, tile):
+
+
+    def GetTileText(self, tile):
         if tile.bomb:
             return "*"
         elif tile.flag:
@@ -30,10 +35,10 @@ class GM:
         for y in range(self.tileArray.shape[0]):
             for x in range(self.tileArray.shape[1]):
                 if showAll:
-                    newButton = tk.Button(self.gameFrame,text = self.getTileText(self.tileArray[y, x]), height = 1, width = 2)
+                    newButton = tk.Button(self.gameFrame,text = self.GetTileText(self.tileArray[y, x]), height = 1, width = 2)
                 else:
                     if self.tileArray[y, x].revealed or self.tileArray[y, x].flag:
-                        newButton = tk.Button(self.gameFrame,text = self.getTileText(self.tileArray[y, x]), height = 1, width = 2)
+                        newButton = tk.Button(self.gameFrame,text = self.GetTileText(self.tileArray[y, x]), height = 1, width = 2)
                     else:
                         newButton = tk.Button(self.gameFrame, height = 1, width = 2)
                     newButton.bind("<Button-1>", lambda event, a = x, b = y: self.TileButtonPressed(a, b))
@@ -70,7 +75,11 @@ class GM:
                     self.tileArray[y, x] = Tile(neighbourBombs)
                     
 
-    
+    def UpdateClock(self):
+        self.time += 0.01
+        timeString = "Time: " + "%.2f" % self.time
+        self.timeLabel.configure(text = timeString)
+        self.root.after(10, self.UpdateClock)
 
     def StartButtonPressed(self, event):
         if len(self.sizeListBox.curselection()) == 1:  #Check if board size is selected
@@ -82,6 +91,8 @@ class GM:
             self.tileArray = np.ndarray((sizeY, sizeX), dtype=np.object)
             self.GenerateTiles()
             self.GenerateTileGrid()
+
+            self.UpdateClock()
 
     def GameOver(self, win):
         if win:

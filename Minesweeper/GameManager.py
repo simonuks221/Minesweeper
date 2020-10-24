@@ -17,7 +17,7 @@ class GM:
         self.selecting.set(True)
         self.flagsPlaced = 0
         self.time = 0
-
+        self.timeRunning = False
 
 
     def GetTileText(self, tile):
@@ -79,7 +79,8 @@ class GM:
         self.time += 0.01
         timeString = "Time: " + "%.2f" % self.time
         self.timeLabel.configure(text = timeString)
-        self.root.after(10, self.UpdateClock)
+        if(self.timeRunning):
+            self.root.after(10, self.UpdateClock)
 
     def StartButtonPressed(self, event):
         if len(self.sizeListBox.curselection()) == 1:  #Check if board size is selected
@@ -92,11 +93,14 @@ class GM:
             self.GenerateTiles()
             self.GenerateTileGrid()
 
+            self.time = 0
+            self.timeRunning = True
             self.UpdateClock()
 
     def GameOver(self, win):
         if win:
-            tk.messagebox.showinfo(title="Game over", message="You won")
+            self.timeRunning = False
+            tk.messagebox.showinfo(title="Game over", message="You won. Time:  " + "%.2f" % self.time + " seconds")
         else:
             tk.messagebox.showerror(title="Game over", message="You lost")
         self.GenerateTileGrid(True)

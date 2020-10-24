@@ -6,8 +6,8 @@ class Tile:
             self.bomb = True
         else:
             self.bomb = False
-            
         self.revealed = False
+        self.flag = False
 
 
 

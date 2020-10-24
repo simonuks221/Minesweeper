@@ -2,10 +2,6 @@ import tkinter as tk
 import numpy as np
 import GameManager as gm
 
-
-
-selecting = True
-
 w = tk.Tk()
 w.title("Minesweeper")
 w.geometry("500x300")
@@ -30,10 +26,12 @@ for x in range(len(gameManager.gameSizeList)):
     sizeListBox.insert(x, gameManager.gameSizeList[x])
 sizeListBox.pack()
 
-selectionRadioButton1 = tk.Radiobutton(infoFrame, text = "Selection", variable = selecting, value = True)
+selectionRadioButton1 = tk.Radiobutton(infoFrame, text = "Selection", variable = gameManager.selecting, value = True)
 selectionRadioButton1.pack()
-selectionRadioButton2 = tk.Radiobutton(infoFrame, text = "Flag", variable = selecting, value = False)
+selectionRadioButton2 = tk.Radiobutton(infoFrame, text = "Flag", variable = gameManager.selecting, value = False)
 selectionRadioButton2.pack()
+
+
 
 mineLabel = tk.Label(infoFrame,text = "Mines amount")
 mineLabel.pack()

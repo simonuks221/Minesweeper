@@ -3,10 +3,12 @@ import numpy as np
 from MinesweeperTIle import Tile
 from tkinter import messagebox
 
+#Game manager script
 class GM:
     gameSizeList = ["10x10", "15x15", "15x10"]
     tileArray = np.ndarray((1, 1), dtype = np.object)
     
+    #Constructor, set references and variables
     def __init__(self, root, gameFrame, sizeListBox, mineSpinBox, timeLabel, bestTimeLabel):
         self.root = root
         self.gameFrame = gameFrame
@@ -21,7 +23,7 @@ class GM:
         self.timeRunning = False
         self.bestTimeLabel.configure(text = "Best overall time: " + str(self.GetBestTime()))
 
-
+    #Get text thats displayed on the buttons
     def GetTileText(self, tile):
         if tile.bomb:
             return "*"
@@ -30,10 +32,13 @@ class GM:
         else:
             return tile.number
 
+    #Generates game button grid
     def GenerateTileGrid(self, showAll = False):
+        #Remove previous widgets
         for widget in self.gameFrame.winfo_children():
             widget.destroy()
 
+        #Make grid
         for y in range(self.tileArray.shape[0]):
             for x in range(self.tileArray.shape[1]):
                 if showAll:
@@ -46,6 +51,7 @@ class GM:
                     newButton.bind("<Button-1>", lambda event, a = x, b = y: self.TileButtonPressed(a, b))
                 newButton.grid(row = y, column = x)
                 
+    #Checks if given coordinates are valid for array
     def ValidCoord(self, x, y):
         return x >= 0 and y >= 0 and x < self.tileArray.shape[1] and y < self.tileArray.shape[0]
 
@@ -57,13 +63,16 @@ class GM:
                 return self.tileArray[y, x].bomb
         return False
 
+    #Generates game tiles array
     def GenerateTiles(self):
         #Generate random bombs
-        #TODO: chck if already bomb before placing
         for a in range(int(self.mineSpinBox.get())):
-            x = np.random.randint(0, self.tileArray.shape[1])
-            y = np.random.randint(0, self.tileArray.shape[0])
-            self.tileArray[y, x] = Tile(-1)
+            while(True):
+                x = np.random.randint(0, self.tileArray.shape[1])
+                y = np.random.randint(0, self.tileArray.shape[0])
+                if(not self.Isbomb(y, x)): #Check if tile isnt already a bomb
+                    self.tileArray[y, x] = Tile(-1)
+                    break
 
         #Fill voids with numbers
         for y in range(0, self.tileArray.shape[0]):
@@ -99,6 +108,7 @@ class GM:
             self.timeRunning = True
             self.UpdateClock()
 
+    #Get best time from highscore file
     def GetBestTime(self):
         try:
             f = open("highscore.txt", "r")
@@ -107,6 +117,8 @@ class GM:
             f = open("highscore.txt", "w")
             highscore = str(100000000)
             f.write(highscore)
+        except OSError as err:
+                    print("Error: ", err)
         finally:
             f.close()
             return highscore
@@ -116,7 +128,7 @@ class GM:
             self.timeRunning = False
             tk.messagebox.showinfo(title="Game over", message="You won. Time:  " + "%.2f" % self.time + " seconds")
             bestTime = self.GetBestTime()
-            if self.time < float(bestTime):
+            if self.time < float(bestTime): #Compare best time to current time, replace if needed
                 try:
                     f = open("highscore.txt", "w")
                     f.write(str( "%.2f" % self.time))
@@ -135,6 +147,7 @@ class GM:
                     return False
         return True
         
+    #Function called on button press
     def TileButtonPressed(self, x, y):
         if self.selecting.get(): #Selecting tile
             if self.tileArray[y, x].bomb:
@@ -156,7 +169,7 @@ class GM:
                     self.GameOver(True)
         self.GenerateTileGrid()
         
-
+    #If pressed 0 then reveal all other connected zeroes
     def RevealEmptyTilesAround(self, x, y):
         for xx in range(-1, 2):
             for yy in range(-1, 2):

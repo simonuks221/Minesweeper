@@ -1,4 +1,4 @@
-
+#Tile class for storing game tile information
 class Tile:
     def __init__(self, number):
         self.number = number

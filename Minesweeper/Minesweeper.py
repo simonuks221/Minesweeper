@@ -28,7 +28,7 @@ bestTimeLabel = tk.Label(infoFrame,text = "Best overall time: 0.00")
 gameManager = gm.GM(w, gameFrame, sizeListBox, mineSpinBox, timeLabel, bestTimeLabel)
 
 
-
+#Add different board sizes to list box
 for x in range(len(gameManager.gameSizeList)):
     sizeListBox.insert(x, gameManager.gameSizeList[x])
 sizeListBox.pack()

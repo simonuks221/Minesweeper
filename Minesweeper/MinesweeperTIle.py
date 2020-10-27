@@ -1,5 +1,6 @@
 #Tile class for storing game tile information
 class Tile:
+    button = None
     def __init__(self, number):
         self.number = number
         if number == -1:

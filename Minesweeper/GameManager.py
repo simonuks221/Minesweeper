@@ -33,7 +33,7 @@ class GM:
             return tile.number
 
     #Generates game button grid
-    def GenerateTileGrid(self, showAll = False):
+    def GenerateButtonGrid(self, showAll = False):
         #Remove previous widgets
         for widget in self.gameFrame.winfo_children():
             widget.destroy()
@@ -41,15 +41,22 @@ class GM:
         #Make grid
         for y in range(self.tileArray.shape[0]):
             for x in range(self.tileArray.shape[1]):
+                newButton = tk.Button(self.gameFrame, height = 1, width = 2)
+                newButton.bind("<Button-1>", lambda event, a = x, b = y: self.TileButtonPressed(a, b))
+                newButton.grid(row = y, column = x)
+                self.tileArray[y, x].button = newButton
+
+    #Updates button grid texts
+    def UpdateButtonGrid(self, showAll = False):
+        for y in range(self.tileArray.shape[0]):
+            for x in range(self.tileArray.shape[1]):
                 if showAll:
-                    newButton = tk.Button(self.gameFrame,text = self.GetTileText(self.tileArray[y, x]), height = 1, width = 2)
+                    self.tileArray[y, x].button.configure(text = self.GetTileText(self.tileArray[y, x]))
                 else:
                     if self.tileArray[y, x].revealed or self.tileArray[y, x].flag:
-                        newButton = tk.Button(self.gameFrame,text = self.GetTileText(self.tileArray[y, x]), height = 1, width = 2)
+                        self.tileArray[y, x].button.configure(text = self.GetTileText(self.tileArray[y, x]))
                     else:
-                        newButton = tk.Button(self.gameFrame, height = 1, width = 2)
-                    newButton.bind("<Button-1>", lambda event, a = x, b = y: self.TileButtonPressed(a, b))
-                newButton.grid(row = y, column = x)
+                        self.tileArray[y, x].button.configure(text = " ")
                 
     #Checks if given coordinates are valid for array
     def ValidCoord(self, x, y):
@@ -102,7 +109,8 @@ class GM:
 
             self.tileArray = np.ndarray((sizeY, sizeX), dtype=np.object)
             self.GenerateTiles()
-            self.GenerateTileGrid()
+            self.GenerateButtonGrid()
+            self.UpdateButtonGrid()
 
             self.time = 0
             self.timeRunning = True
@@ -138,7 +146,7 @@ class GM:
                     print("Error: ", err)
         else:
             tk.messagebox.showerror(title="Game over", message="You lost")
-        self.GenerateTileGrid(True)
+        self.UpdateButtonGrid(True)
 
     def CheckWin(self):
         for y in self.tileArray:
@@ -167,7 +175,7 @@ class GM:
                 self.flagsPlaced += 1
                 if self.CheckWin():
                     self.GameOver(True)
-        self.GenerateTileGrid()
+        self.UpdateButtonGrid()
         
     #If pressed 0 then reveal all other connected zeroes
     def RevealEmptyTilesAround(self, x, y):

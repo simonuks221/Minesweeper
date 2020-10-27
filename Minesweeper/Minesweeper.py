@@ -13,21 +13,20 @@ infoFrame.pack(side="left", fill = "y")
 gameLabel = tk.Label(infoFrame,text = "Minesweeper", font=("Arial", 20))
 
 gameSizeLabel = tk.Label(infoFrame,text = "Board size")
-gameSizeLabel.pack()
 
 gameLabel.pack(side = "top")
 
 sizeListBox = tk.Listbox(infoFrame, height = 3)
 gameFrame = tk.Frame(w)
 gameFrame.pack(fill = "both", expand = "yes")
-mineSpinBox = tk.Spinbox(infoFrame, from_ = 1, to = 10)
+mineSpinBox = tk.Spinbox(infoFrame, from_ = 1, to = 25)
 
 timeLabel = tk.Label(infoFrame,text = "Time: 0.00")
 bestTimeLabel = tk.Label(infoFrame,text = "Best overall time: 0.00")
 
 gameManager = gm.GM(w, gameFrame, sizeListBox, mineSpinBox, timeLabel, bestTimeLabel)
 
-
+gameSizeLabel.pack()
 #Add different board sizes to list box
 for x in range(len(gameManager.gameSizeList)):
     sizeListBox.insert(x, gameManager.gameSizeList[x])

@@ -33,7 +33,7 @@ class GM:
             return tile.number
 
     #Generates game button grid
-    def GenerateButtonGrid(self, showAll = False):
+    def GenerateButtonGrid(self):
         #Remove previous widgets
         for widget in self.gameFrame.winfo_children():
             widget.destroy()
@@ -132,9 +132,9 @@ class GM:
             return highscore
 
     def GameOver(self, win):
+        self.timeRunning = False
         if win:
-            self.timeRunning = False
-            tk.messagebox.showinfo(title="Game over", message="You won. Time:  " + "%.2f" % self.time + " seconds")
+            tk.messagebox.showerror(title="Game over", message="You won. Time:  " + "%.2f" % self.time + " seconds")
             bestTime = self.GetBestTime()
             if self.time < float(bestTime): #Compare best time to current time, replace if needed
                 try:
@@ -146,6 +146,7 @@ class GM:
                     print("Error: ", err)
         else:
             tk.messagebox.showerror(title="Game over", message="You lost")
+        self.GenerateButtonGrid()
         self.UpdateButtonGrid(True)
 
     def CheckWin(self):
@@ -157,25 +158,27 @@ class GM:
         
     #Function called on button press
     def TileButtonPressed(self, x, y):
-        if self.selecting.get(): #Selecting tile
-            if self.tileArray[y, x].bomb:
-                self.GameOver(False)
-            else:
-                self.tileArray[y, x].revealed = True
-                if self.tileArray[y, x].number == 0:
-                    self.RevealEmptyTilesAround(x, y)
-                
-        else: #Placing flag
-            if self.tileArray[y, x].flag:
-                self.flagsPlaced -= 1
-                self.tileArray[y, x].flag = False
+        if self.timeRunning:
+            if self.selecting.get(): #Selecting tile
+                if self.tileArray[y, x].bomb:
+                    self.GameOver(False)
+                else:
+                    self.tileArray[y, x].revealed = True
+                    if self.tileArray[y, x].number == 0:
+                        self.RevealEmptyTilesAround(x, y)
+                    self.UpdateButtonGrid() 
+            else: #Placing flag
+                if self.tileArray[y, x].flag:
+                    self.flagsPlaced -= 1
+                    self.tileArray[y, x].flag = False
+                    self.UpdateButtonGrid() 
 
-            elif self.flagsPlaced < int(self.mineSpinBox.get()):
-                self.tileArray[y, x].flag = True
-                self.flagsPlaced += 1
-                if self.CheckWin():
-                    self.GameOver(True)
-        self.UpdateButtonGrid()
+                elif self.flagsPlaced < int(self.mineSpinBox.get()):
+                    self.tileArray[y, x].flag = True
+                    self.flagsPlaced += 1
+                    self.UpdateButtonGrid() 
+                    if self.CheckWin():
+                        self.GameOver(True)
         
     #If pressed 0 then reveal all other connected zeroes
     def RevealEmptyTilesAround(self, x, y):

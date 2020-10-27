@@ -7,17 +7,19 @@ class GM:
     gameSizeList = ["10x10", "15x15", "15x10"]
     tileArray = np.ndarray((1, 1), dtype = np.object)
     
-    def __init__(self, root, gameFrame, sizeListBox, mineSpinBox, timeLabel):
+    def __init__(self, root, gameFrame, sizeListBox, mineSpinBox, timeLabel, bestTimeLabel):
         self.root = root
         self.gameFrame = gameFrame
         self.sizeListBox = sizeListBox
         self.mineSpinBox = mineSpinBox
         self.timeLabel = timeLabel
+        self.bestTimeLabel = bestTimeLabel
         self.selecting = tk.BooleanVar()
         self.selecting.set(True)
         self.flagsPlaced = 0
         self.time = 0
         self.timeRunning = False
+        self.bestTimeLabel.configure(text = "Best overall time: " + str(self.GetBestTime()))
 
 
     def GetTileText(self, tile):
@@ -97,10 +99,31 @@ class GM:
             self.timeRunning = True
             self.UpdateClock()
 
+    def GetBestTime(self):
+        try:
+            f = open("highscore.txt", "r")
+            highscore = f.read()
+        except FileNotFoundError:
+            f = open("highscore.txt", "w")
+            highscore = str(100000000)
+            f.write(highscore)
+        finally:
+            f.close()
+            return highscore
+
     def GameOver(self, win):
         if win:
             self.timeRunning = False
             tk.messagebox.showinfo(title="Game over", message="You won. Time:  " + "%.2f" % self.time + " seconds")
+            bestTime = self.GetBestTime()
+            if self.time < float(bestTime):
+                try:
+                    f = open("highscore.txt", "w")
+                    f.write(str( "%.2f" % self.time))
+                    f.close()
+                    self.bestTimeLabel.configure(text = "Best overall time: " + str(self.GetBestTime()))
+                except OSError as err:
+                    print("Error: ", err)
         else:
             tk.messagebox.showerror(title="Game over", message="You lost")
         self.GenerateTileGrid(True)

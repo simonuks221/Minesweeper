@@ -23,9 +23,9 @@ gameFrame.pack(fill = "both", expand = "yes")
 mineSpinBox = tk.Spinbox(infoFrame, from_ = 1, to = 10)
 
 timeLabel = tk.Label(infoFrame,text = "Time: 0.00")
+bestTimeLabel = tk.Label(infoFrame,text = "Best overall time: 0.00")
 
-
-gameManager = gm.GM(w, gameFrame, sizeListBox, mineSpinBox, timeLabel)
+gameManager = gm.GM(w, gameFrame, sizeListBox, mineSpinBox, timeLabel, bestTimeLabel)
 
 
 
@@ -44,6 +44,8 @@ mineLabel = tk.Label(infoFrame,text = "Mines amount")
 mineLabel.pack()
 mineSpinBox.pack()
 
+
+bestTimeLabel.pack(side = "top")
 timeLabel.pack(side = "top")
 
 startButton = tk.Button(infoFrame, text="Start", width = 10, height = 2)

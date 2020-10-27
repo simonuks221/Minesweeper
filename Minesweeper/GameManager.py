@@ -29,6 +29,8 @@ class GM:
             return "*"
         elif tile.flag:
             return "F"
+        elif tile.number == 0:
+            return " "
         else:
             return tile.number
 
@@ -51,12 +53,14 @@ class GM:
         for y in range(self.tileArray.shape[0]):
             for x in range(self.tileArray.shape[1]):
                 if showAll:
-                    self.tileArray[y, x].button.configure(text = self.GetTileText(self.tileArray[y, x]))
+                    self.tileArray[y, x].button.configure(text = self.GetTileText(self.tileArray[y, x]), bg = "light gray")
                 else:
-                    if self.tileArray[y, x].revealed or self.tileArray[y, x].flag:
-                        self.tileArray[y, x].button.configure(text = self.GetTileText(self.tileArray[y, x]))
+                    if self.tileArray[y, x].revealed:
+                        self.tileArray[y, x].button.configure(text = self.GetTileText(self.tileArray[y, x]), bg = "light gray")
+                    elif self.tileArray[y, x].flag:
+                        self.tileArray[y, x].button.configure(text = "F", bg = "light gray")
                     else:
-                        self.tileArray[y, x].button.configure(text = " ")
+                        self.tileArray[y, x].button.configure(text = " ",  bg = "gray")
                 
     #Checks if given coordinates are valid for array
     def ValidCoord(self, x, y):
@@ -134,7 +138,7 @@ class GM:
     def GameOver(self, win):
         self.timeRunning = False
         if win:
-            tk.messagebox.showerror(title="Game over", message="You won. Time:  " + "%.2f" % self.time + " seconds")
+            tk.messagebox.showinfo(title="Game over", message="You won. Time:  " + "%.2f" % self.time + " seconds")
             bestTime = self.GetBestTime()
             if self.time < float(bestTime): #Compare best time to current time, replace if needed
                 try:

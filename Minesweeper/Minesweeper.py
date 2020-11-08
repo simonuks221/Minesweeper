@@ -10,11 +10,11 @@ w.minsize("600", "400")
 
 #Frame for game configuration
 infoFrame = tk.Frame(w)
-infoFrame.pack(side="left", fill = "y")
+infoFrame.pack(side="left", fill = "y", pady = 10, padx = 5)
 
 #Frame for game button grid
 gameFrame = tk.Frame(w)
-gameFrame.pack(fill = "both", expand = "yes")
+gameFrame.pack(fill = "both", expand = "yes", padx=10, pady = 10)
 
 gameLabel = tk.Label(infoFrame,text = "Minesweeper", font=("Arial", 20))
 gameLabel.pack(side = "top")

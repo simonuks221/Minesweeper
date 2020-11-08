@@ -43,10 +43,10 @@ class GM:
 
         #Make new button grid
         for y in range(self.tileArray.shape[0]):
-            for x in range(self.tileArray.shape[1]):
-                newButton = tk.Button(self.gameFrame, height = 1, width = 2)
+            for x in range(self.tileArray.shape[1]): #Spawn new buttons in a grid and fill it in
+                newButton = tk.Button(self.gameFrame)
                 newButton.bind("<Button-1>", lambda event, a = x, b = y: self.TileButtonPressed(a, b))
-                newButton.grid(row = y, column = x)
+                newButton.grid(row = y, column = x, sticky="N"+"S"+"E"+"W")
                 self.tileArray[y, x].button = newButton
 
     #Updates button grid texts
@@ -113,6 +113,12 @@ class GM:
             size = self.gameSizeList[self.sizeListBox.curselection()[0]]
             sizeX = int(size.split("x")[0])
             sizeY = int(size.split("x")[1])
+
+            #Configuration to auto expand buttons to full extent
+            for i in range(sizeX):
+                self.gameFrame.columnconfigure(i, weight=1)
+            for i in range(sizeY):
+                self.gameFrame.rowconfigure(i, weight=1)
 
             #Generate tile grid and button board
             self.tileArray = np.ndarray((sizeY, sizeX), dtype=np.object)
